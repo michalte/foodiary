@@ -1,0 +1,44 @@
+<header style="height: 50px; text-align: center; background-color: whitesmoke;"> <button id="menuButton" (click)="openCloseNav()">
+<mat-icon [ngStyle]="{'color': menuOpened? '#818181' : '#111'}">menu</mat-icon></button>
+<img src="/assets/foodiarylogo.png" style="height: 40px; margin-top: 5px">
+</header>
+
+<app-menu [menuOpened]="menuOpened"></app-menu>
+
+<main style="display: flex; justify-content: start; flex-direction: column; align-items: center; height: calc(100% - 50px);">
+  <div style="box-shadow: 2px 0px 6px 0px rgba(66, 68, 90, 1); padding: 1%; margin-top: 5%; border-radius: 3px; text-align: center; width: 450px">
+<h1>Set new password:</h1>
+  <form [formGroup]="form">
+    <div>
+    <mat-form-field appearance="outline" style="width: 80%">
+      <mat-label>Current password:</mat-label>
+      <input type="password" matInput formControlName="password">
+      <mat-error>This field is required.</mat-error>
+    </mat-form-field>
+    </div>
+    <div>
+    <mat-form-field appearance="outline" style="width: 80%">
+      <mat-label>New password:</mat-label>
+      <input [type]="hidePassword ? 'password' : 'text'" matInput formControlName="newPassword" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$">
+      <button type="button" mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
+        <mat-icon>{{hidePassword ? 'visibility' : 'visibility_off'}}
+        </mat-icon></button>
+      <mat-error>Strong password is required.</mat-error>
+    </mat-form-field>
+    </div>
+    <div>
+    <mat-form-field appearance="outline" style="width: 80%">
+      <mat-label>Repeated new password:</mat-label>
+      <input [type]="hideRepeatedPassword ? 'password' : 'text'" matInput formControlName="repeatedPassword">
+      <button type="button" mat-icon-button matSuffix (click)="hideRepeatedPassword = !hideRepeatedPassword">
+        <mat-icon>{{hideRepeatedPassword ? 'visibility' : 'visibility_off'}}
+        </mat-icon></button>
+      <mat-error>This field is required.</mat-error>
+    </mat-form-field>
+    </div>
+    <div style="color: red; margin-bottom: 5px" [ngStyle]="success?{'color': 'green'} : {'color': 'red'}">{{message}}</div>
+    <button mat-raised-button [disabled]="form.invalid" (click)="updateUserPassword()">Confirm</button>
+  </form>
+  </div>
+<!--  <img [src]="src" />-->
+</main>

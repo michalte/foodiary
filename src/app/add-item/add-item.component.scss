@@ -1,0 +1,33 @@
+#menuButton {
+  z-index: 1000;
+  position: fixed;
+  cursor: pointer;
+  height: 50px;
+  background: transparent;
+  border: none;
+  left: 0;
+}
+
+div {
+  text-align: center;
+}
+
+mat-form-field {
+  margin-right: 10px;
+}
+.file-input {
+  display: none;
+}
+.formWrapper{
+  overflow-y: scroll;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  padding: 1%;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.formWrapper::-webkit-scrollbar {
+  display: none;
+}
+
+

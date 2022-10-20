@@ -1,0 +1,153 @@
+<header style="height: 50px; text-align: center; background-color: whitesmoke;"> <button id="menuButton" (click)="openCloseNav()">
+  <mat-icon [ngStyle]="{'color': menuOpened? '#818181' : '#111'}">menu</mat-icon></button>
+  <img src="/assets/foodiarylogo.png" style="height: 40px; margin-top: 5px">
+</header>
+
+<app-menu [menuOpened]="menuOpened"></app-menu>
+
+<main style="display: flex; justify-content: start; flex-direction: column; align-items: center; height: calc(100% - 50px)">
+  <div id="filterBar" style="margin-bottom: 2px; width: 60%; position: relative; display: flex; flex-wrap: wrap; justify-content: center">
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="filterUserOrders()">
+      <mat-option *ngFor="let place of places" [value]=place>
+        {{place}}
+      </mat-option>
+    </mat-autocomplete>
+    <mat-form-field appearance="outline" style="margin-right: 5px">
+      <mat-label>Place:</mat-label>
+    <input type="text"
+           placeholder="Filter by places"
+           aria-label="Number"
+           matInput
+           #placeInput
+           [(ngModel)]="filters.placeFilter"
+           [matAutocomplete]="auto"
+           (input)="filterPlaces(placeInput.value); filterUserOrders()">
+    </mat-form-field>
+
+    <mat-autocomplete #auto2="matAutocomplete" (optionSelected)="filterUserOrders()">
+      <mat-option *ngFor="let dish of dishes" [value]=dish>
+        {{dish}}
+      </mat-option>
+    </mat-autocomplete>
+    <mat-form-field appearance="outline" style="margin-right: 5px">
+      <mat-label>Dish:</mat-label>
+      <input type="text"
+             placeholder="Filter by dishes"
+             aria-label="Number"
+             matInput
+             #dishInput
+             [(ngModel)]="filters.dishFilter"
+             [matAutocomplete]="auto2"
+             (input)="filterDishes(dishInput.value); filterUserOrders()">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" style="margin-right: 5px">
+      <mat-label>Date range:</mat-label>
+      <mat-date-range-input [rangePicker]="picker">
+        <input matStartDate placeholder="Start date" readonly [(ngModel)]="dateRange.start">
+        <input matEndDate placeholder="End date" readonly [(ngModel)]="dateRange.end" (dateInput)="filterUserOrders()">
+      </mat-date-range-input>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker (opened)="resetDateRangePicker()" #picker></mat-date-range-picker>
+    </mat-form-field>
+
+<!--    <mat-slide-toggle [(ngModel)]="delivery" (change)="filterUserOrders()" style="padding-top: 15px">Dine In / Delivery</mat-slide-toggle>-->
+
+    <mat-button-toggle-group [(value)]="delivery" (click)="filterUserOrders()" name="fontStyle" aria-label="Font Style" style="height: 50px; margin-top: 3px">
+      <mat-button-toggle value="false">Dine In</mat-button-toggle>
+      <mat-button-toggle value="true">Delivery</mat-button-toggle>
+      <mat-button-toggle value="All">All</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-form-field appearance="outline" style="width: 600px;">
+      <mat-label>Tags: </mat-label>
+      <mat-chip-list #chipList>
+        <mat-chip *ngFor="let tag of filters.tags; index as i">
+          {{tag}}
+          <mat-icon matChipRemove (click)="deleteTag(i)">cancel</mat-icon>
+        </mat-chip>
+        <input
+          #tagInput
+          [(ngModel)]="chip"
+          placeholder="Filter by tags (max. 3)"
+          [matAutocomplete]="tagAuto"
+          [matChipInputFor]="chipList"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          (input)="filterTags(tagInput.value)">
+      </mat-chip-list>
+      <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="addTag(); tagInput.value=''; filterUserOrders()">
+        <mat-option *ngFor="let tag of tags" [value]="tag">
+          {{tag}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+
+    <mat-form-field appearance="outline" style="margin-left: 5px">
+      <mat-label>Sort by:</mat-label>
+      <mat-select [(value)]="sortBy" (selectionChange)="filterUserOrders()">
+        <mat-option value="Date">Date</mat-option>
+        <mat-option value="Rating">Rating</mat-option>
+        <mat-option value="Price">Price</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+
+
+
+  </div>
+  <div class="ordersWrapper">
+  <ng-container *ngFor="let order of listOfUsersOrders; index as id">
+    <div class="box-shadow-container" style="box-shadow: 2px 0px 6px 0px rgba(66, 68, 90, 1); cursor: pointer; border-radius: 3px" (click)="openDetails(id)">
+    <div style="min-height: 20px; height: 140px; margin-top: 10px; width: 100%; display: flex; border-radius: 3px;">
+      <div style="width: 50%; display: flex; flex-direction: column">
+        <div class="dishNameField" style="height: 50%; font-size: 1.6rem; padding: 2%">{{order.dishName}}</div>
+        <div class="placeNameField" style=" height: 50%; font-size: 1.2rem; padding: 2%">{{order.place}} ({{order.city}})</div>
+      </div>
+      <div style="width: 30%; display: flex; flex-direction: column">
+        <div class="rateField" style="height: 50%; font-size: 1.2rem; padding: 2%; text-align: end">
+          <span *ngFor="let star of [].constructor(order.rate)">&#9733;</span>
+          <span *ngFor="let emptystar of [].constructor(10 - order.rate)">&#9734;</span>
+        </div>
+        <div class="dateField" style="height: 50%; font-size: 1rem; padding: 2%; text-align: end">{{order.date | date: 'dd/MM/yyyy'}}</div>
+        <div class="deliveryField" style="height: 50%; font-size: 0.8rem; padding: 2%; text-align: end">
+          <span *ngIf="!order.delivery"><mat-icon>restaurant</mat-icon></span>
+          <span *ngIf="order.delivery"><mat-icon>local_shipping</mat-icon></span>
+        </div>
+      </div>
+      <div style="width: 20%; display: flex; flex-direction: column; border-radius: 3px">
+      <img *ngIf="order.image" class="dishImage" [src]=getSanitizeUrl(order.image) style="height: 100%; border-radius: 3px;" (click)="openDialog($event, getSanitizeUrl(order.image))">
+      <img *ngIf="!order.image" class="dishImage" src='/assets/nophoto.png' style="height: 100%; border-radius: 3px;" (click)="openDialog($event, 'assets/nophoto.png')">
+      </div>
+    </div>
+   <div *ngIf="id == openedIndex" [@inOutAnimation] style="border-top: 0; width: 100%; border-bottom-left-radius: 3px; border-bottom-right-radius: 3px; display: flex;">
+     <div style="width: 50%">
+       <p style="padding-left: 2%; padding-right: 2%; font-size: 1rem">Dish's description:</p>
+       <div *ngIf="order.dishDesc" style="padding-left: 2%; padding-right: 2%; margin-bottom: 5%" class="ingredientsField">{{order.dishDesc}}</div>
+       <div *ngIf="!order.dishDesc" style="padding-left: 2%; padding-right: 2%; margin-bottom: 5%" class="ingredientsField">Not provided.</div>
+       <p style="padding-left: 2%; padding-right: 2%; font-size: 1rem">Approximate waiting time (minutes):</p>
+       <div *ngIf="order.waitingTime!=0" style="padding-left: 2%; padding-right: 2%; margin-bottom: 5%" class="timeField">{{order.waitingTime}}</div>
+       <div *ngIf="order.waitingTime==0" style="padding-left: 2%; padding-right: 2%; margin-bottom: 5%" class="timeField">Not provided.</div>
+       <p style="padding-left: 2%; padding-right: 2%; font-size: 1rem">Address:</p>
+       <div *ngIf="order.address && order.country" style="padding-left: 2%; padding-right: 2%" class="timeField">{{order.address}}, {{order.city}}, {{order.country}}</div>
+       <div *ngIf="order.address && !order.country" style="padding-left: 2%; padding-right: 2%" class="timeField">{{order.address}}, {{order.city}}</div>
+       <div *ngIf="!order.address && order.country" style="padding-left: 2%; padding-right: 2%" class="timeField">{{order.city}}, {{order.country}}</div>
+       <div *ngIf="!order.address && !order.country" style="padding-left: 2%; padding-right: 2%" class="timeField">{{order.city}}</div>
+     </div>
+     <div style="width: 50%; position: relative">
+       <p style="padding-left: 2%; padding-right: 2%; font-size: 1rem">Notes:</p>
+       <div *ngIf="order.notes" style="padding-left: 2%; padding-right: 2%; margin-bottom: 5%" class="notesField">{{order.notes}}</div>
+       <div *ngIf="!order.notes" style="padding-left: 2%; padding-right: 2%; margin-bottom: 5%" class="notesField">Not provided.</div>
+       <p style="padding-left: 2%; padding-right: 2%; font-size: 1rem">Tags:</p>
+       <div *ngIf="order.tags.length>0" style="padding-left: 2%; padding-right: 2%; margin-bottom: 5%" class="tagsField"><span style="font-style: italic" *ngFor="let tag of order.tags">#{{tag}} </span></div>
+       <div *ngIf="order.tags.length==0" style="padding-left: 2%; padding-right: 2%; margin-bottom: 5%" class="tagsField"><span style="font-style: italic">Not provided. </span></div>
+       <p style="padding-left: 2%; padding-right: 2%; font-size: 1rem">Price:</p>
+       <div *ngIf="order.price!=0" style="padding-left: 2%; padding-right: 2%; margin-bottom: 5%" class="priceField">{{order.price | number: '1.2-2'}} {{order.currency}}</div>
+       <div *ngIf="order.price==0" style="padding-left: 2%; padding-right: 2%; margin-bottom: 5%" class="priceField">Not provided.</div>
+       <span style="position: absolute; bottom: 0; right: 25px"><mat-icon class="deleteEditButtons" (click)="openDeleteConfirmation($event, order.id)">delete</mat-icon></span>
+     </div>
+   </div>
+    </div>
+  </ng-container>
+  </div>
+</main>

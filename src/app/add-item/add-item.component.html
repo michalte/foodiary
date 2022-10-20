@@ -1,0 +1,150 @@
+<header style="height: 50px; text-align: center; background-color: whitesmoke;"> <button id="menuButton" (click)="openCloseNav()">
+  <mat-icon [ngStyle]="{'color': menuOpened? '#818181' : '#111'}">menu</mat-icon></button>
+  <img src="/assets/foodiarylogo.png" style="height: 40px; margin-top: 5px">
+</header>
+
+<app-menu [menuOpened]="menuOpened"></app-menu>
+
+<main style="display: flex; justify-content: start; flex-direction: column; align-items: center; height: calc(100% - 50px)">
+<div class="formWrapper" style="width: 50%">
+<form [formGroup]="form">
+
+<div class="mutualData" style="box-shadow: 2px 0px 6px 0px rgba(66, 68, 90, 1); border-left: 5px solid #673AB7; border-radius: 3px; margin-bottom: 25px; margin-top: 5px; padding: 5px">
+  <mat-form-field appearance="outline">
+    <mat-label>Place*:</mat-label>
+    <input matInput type="text" formControlName="place">
+    <mat-error>This field is required.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>City*:</mat-label>
+    <input matInput type="text" formControlName="city">
+    <mat-error>This field is required.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Country:</mat-label>
+    <input matInput type="text" formControlName="country">
+    <mat-error>This field is required.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Address:</mat-label>
+    <input matInput type="text" formControlName="address">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Date*:</mat-label>
+    <input matInput [matDatepicker]="picker" readonly formControlName="date">
+    <mat-error>This field is required.</mat-error>
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+
+  <mat-slide-toggle style="padding-top: 15px" formControlName="delivery"><mat-icon style="vertical-align: -9px">local_shipping</mat-icon></mat-slide-toggle>
+
+</div>
+  <ng-container formArrayName="dishes">
+    <ng-container *ngFor="let dish of dishes.controls; index as i">
+  <div [formGroupName]="i" id="singleDish" style="border-radius: 3px; padding: 5px; border-left: 5px solid #FFEB3B; margin-bottom: 10px; box-shadow: 2px 0px 6px 0px rgba(66, 68, 90, 1);">
+  <div>
+  <mat-form-field appearance="outline">
+    <mat-label>Dish*:</mat-label>
+    <input matInput type="text" formControlName="dishName">
+    <mat-error>This field is required.</mat-error>
+  </mat-form-field>
+
+  <span>Rate: </span>
+  <mat-slider style="width: 30%" min="1" max="10" step="1" thumbLabel [displayWith]="format" formControlName="rate"></mat-slider>
+
+    <mat-form-field appearance="outline" style="width: 200px;">
+      <mat-label>Waiting time (minutes):</mat-label>
+      <input matInput type="number" step="1" min="1" pattern="\d*" style="text-align: right" formControlName="waitingTime">
+      <mat-error>This field requires positive integers.</mat-error>
+    </mat-form-field>
+
+  </div>
+
+
+
+  <div>
+    <mat-form-field appearance="outline" style="width: 40%">
+      <mat-label>Description:</mat-label>
+      <textarea matInput formControlName="ingredients"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" style="width: 40%">
+      <mat-label>Notes:</mat-label>
+      <textarea matInput  formControlName="notes"></textarea>
+    </mat-form-field>
+  </div>
+
+    <div>
+
+      <mat-form-field class="example-chip-list" appearance="outline" style="width: 600px;">
+        <mat-label>Tags: </mat-label>
+        <mat-chip-list #chipList>
+          <mat-chip *ngFor="let tag of tags[i]; index as id">
+            {{tag}}
+            <mat-icon matChipRemove (click)="deleteTag(i, id)">cancel</mat-icon>
+          </mat-chip>
+          <input
+            #tagInput
+            placeholder="Tags (max. 3)"
+            [matAutocomplete]="tagAuto"
+            [matChipInputFor]="chipList"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            formControlName="tags"
+            (keyup.enter)="addTagFromInput($event, i); tagInput.value='';"
+          >
+        </mat-chip-list>
+        <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="addTag($event, i); tagInput.value='';">
+          <mat-option *ngFor="let tag of userTags" [value]="tag">
+            {{tag}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" style="width: 100px;">
+        <mat-label>Price:</mat-label>
+        <input matInput type="number" pattern="^\d*(\.\d{0,2})?$" min="0" style="text-align: right" formControlName="price" (change)="setCurrencyRequired(i)">
+        <mat-error>Provided value is incorrect.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" style="width: 120px;">
+        <mat-label>Currency</mat-label>
+        <mat-select formControlName="currency">
+          <mat-option *ngFor="let currency of currencies" [value]="currency">
+            {{currency}}
+          </mat-option>
+        </mat-select>
+        <mat-error>This field is required.</mat-error>
+      </mat-form-field>
+
+    </div>
+    <div>
+  <input type="file" class="file-input"
+         (change)="onFileSelected($event, i)" #fileUpload>
+
+  <div class="file-upload">
+
+    {{this.files[i]?.name || "Upload a picture."}}
+
+    <button type="button" mat-mini-fab color="primary" class="upload-btn" (click)="fileUpload.click()">
+      <mat-icon>attach_file</mat-icon>
+    </button>
+  </div>
+    </div>
+  </div>
+    </ng-container>
+  </ng-container>
+ <div style="text-align: center; position: relative">
+   <button type="button"  mat-icon-button color="primary" (click)="addDish()"><mat-icon>add_circle_outline</mat-icon></button>
+   <button type="button"  mat-icon-button color="primary" (click)="subtractDish()"><mat-icon>remove_circle_outline</mat-icon></button>
+ </div>
+  <div style="text-align: right"> <button mat-raised-button type="submit" color="primary" (click)="addDishesToJournal()" [disabled]="this.form.invalid">Save your dishes</button> </div>
+</form>
+</div>
+
+</main>

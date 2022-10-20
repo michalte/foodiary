@@ -1,0 +1,45 @@
+.wrapper{
+ // min-height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  min-width: 400px;
+}
+header{
+  text-align: center;
+  margin-bottom: 10vh;
+  width: 100%;
+}
+.login-form-wrapper{
+ // width: 25%;
+  height: initial;
+
+}
+mat-card{
+}
+mat-card-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+mat-card-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+mat-label{
+  font-size: 1.2em;
+}
+span{
+  display: block;
+  text-align: center;
+}
+button{
+  width: 25%;
+}
+a:link{
+  color: #520552;
+}

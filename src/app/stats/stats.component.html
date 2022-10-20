@@ -1,0 +1,48 @@
+<header style="height: 50px; text-align: center; background-color: whitesmoke;"> <button id="menuButton" (click)="openCloseNav()">
+  <mat-icon [ngStyle]="{'color': menuOpened? '#818181' : '#111'}">menu</mat-icon></button>
+  <img src="/assets/foodiarylogo.png" style="height: 40px; margin-top: 5px">
+</header>
+
+<app-menu [menuOpened]="menuOpened"></app-menu>
+
+<main style="display: flex; justify-content: start; flex-direction: column; align-items: center; height: calc(100% - 50px);">
+
+  <div style="width: 50%; margin-top: 2%">
+    <div style="text-align: center">
+    <mat-form-field appearance="outline" style="margin-right: 10px">
+      <mat-label>Date range:</mat-label>
+      <mat-date-range-input [rangePicker]="picker">
+        <input matStartDate placeholder="Start date" readonly [(ngModel)]="dateRange.start">
+        <input matEndDate placeholder="End date" readonly [(ngModel)]="dateRange.end" (dateInput)="filterValuesByDate()">
+      </mat-date-range-input>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker (opened)="resetDateRangePicker()" #picker></mat-date-range-picker>
+    </mat-form-field>
+
+    </div>
+    <div style="text-align: center; width: 100%;"><span *ngIf="showHint">Choose a date range to show the stats of a particular period.</span></div>
+  </div>
+
+  <div style="width: 50%;  border-left: 1px transparent solid; border-right: 1px transparent solid; border-radius: 3px; box-shadow: 2px 0px 6px 0px rgba(66, 68, 90, 1);">
+  <table mat-table [dataSource]="dataSource" style="width: 100%; ">
+
+    <ng-container matColumnDef="statName">
+      <th style="width: 30%" mat-header-cell *matHeaderCellDef> Statistic </th>
+      <td mat-cell *matCellDef="let element"> {{element.statName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="statWinner">
+      <th style="width: 50%" mat-header-cell *matHeaderCellDef> Winner(s) </th>
+      <td mat-cell *matCellDef="let element"> {{element.statWinner}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="statValue">
+      <th style="width: 20%" mat-header-cell *matHeaderCellDef> Value </th>
+      <td mat-cell *matCellDef="let element"> {{element.statValue}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr (click)="changeCurrency(row)" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  </div>
+</main>

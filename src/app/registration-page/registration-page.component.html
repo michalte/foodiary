@@ -1,0 +1,64 @@
+<div class="wrapper">
+  <header>
+  </header>
+  <div class="login-form-wrapper">
+    <mat-card>
+      <form (ngSubmit)="submit()" #form="ngForm">
+      <mat-card-title>Register</mat-card-title>
+      <mat-card-subtitle>Fill the form in order to register your account.</mat-card-subtitle>
+      <br>
+      <mat-card-content>
+        <mat-form-field appearance="outline" hideRequiredMarker="true" class="text-input">
+          <mat-label>Login:</mat-label>
+          <input matInput required minlength="3" maxlength="20" [(ngModel)]="newUser.login" name="login" #login="ngModel" #input (focus)="show(login, input)">
+          <mat-error *ngIf="login.errors?.required">This field is required.</mat-error>
+          <mat-error *ngIf="login.errors?.minlength">Login is too short.</mat-error>
+          <mat-error *ngIf="login.errors?.maxlength">Login is too long.</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" hideRequiredMarker="true" class="text-input">
+          <mat-label>E-mail:</mat-label>
+          <input matInput type="email" required email [(ngModel)]="newUser.email" name="email" #email="ngModel">
+          <mat-error *ngIf="email.errors?.required">This field is required.</mat-error>
+          <mat-error *ngIf="email.errors?.email">E-mail is incorrect.</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" hideRequiredMarker="true" class="text-input">
+          <mat-label>Password:</mat-label>
+          <input [type]="hidePassword ? 'password' : 'text'" matInput [(ngModel)]="newUser.password" name="password" required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$" #password="ngModel">
+          <button type="button" mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
+            <mat-icon>{{hidePassword ? 'visibility' : 'visibility_off'}}
+            </mat-icon>
+          </button>
+          <mat-error *ngIf="password.errors?.required">This field is required.</mat-error>
+          <mat-error *ngIf="password.errors?.pattern">Password needs a capital letter and a digit.</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" hideRequiredMarker="true" class="text-input">
+          <mat-label>Repeated password:</mat-label>
+          <input [type]="hideRepeatedPassword ? 'password' : 'text'" matInput [(ngModel)]="repeatedPasswordCheck" name="repeatedPassword" required #repeatedPassword="ngModel">
+          <button type="button" mat-icon-button matSuffix (click)="hideRepeatedPassword = !hideRepeatedPassword">
+            <mat-icon>{{hideRepeatedPassword ? 'visibility' : 'visibility_off'}}
+            </mat-icon>
+          </button>
+          <mat-error *ngIf="repeatedPassword.errors?.required">This field is required.</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" hideRequiredMarker="true" class="text-input">
+          <mat-label>Name:</mat-label>
+          <input matInput [(ngModel)]="newUser.name" name="name" required minlength="2" maxlength="30" pattern="^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{0,}$" (input)="makeSureCapitalLetterFirst()" #name="ngModel">
+          <mat-error *ngIf="name.errors?.required">This field is required.</mat-error>
+          <mat-error *ngIf="name.errors?.minlength">Name is too short.</mat-error>
+          <mat-error *ngIf="name.errors?.maxlength">Name is too long.</mat-error>
+          <mat-error *ngIf="name.errors?.pattern">Only letters are allowed.</mat-error>
+        </mat-form-field>
+          <mat-radio-group [(ngModel)]="newUser.gender" name="gender" required>
+            <mat-radio-button value="male">Male</mat-radio-button>
+            <mat-radio-button value="female">Female</mat-radio-button>
+          </mat-radio-group>
+        <mat-checkbox [(ngModel)]="termsAccepted" name="termsAccepted" required>I accept the terms of service.</mat-checkbox>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Register</button>
+      </mat-card-actions>
+    </form>
+      <mat-error *ngIf="serverError!=''" style="text-align: center"> {{serverError}} </mat-error>
+    </mat-card>
+  </div>
+</div>

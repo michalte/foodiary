@@ -1,0 +1,7 @@
+<div id="mySidenav" class="sidenav" [ngStyle]="{'width': menuOpened ? '250px' : '0'}">
+  <a routerLink="/food-list-page" href="#" style="margin-top: 50px">Diary <mat-icon class="centeredIcon">book</mat-icon></a>
+  <a routerLink="/add-item-page" href="#">New <mat-icon class="centeredIcon">add_circle</mat-icon></a>
+  <a routerLink="/stats-page" href="#">Stats <mat-icon class="centeredIcon">trending_up</mat-icon></a>
+  <a routerLink="/settings-page" href="#" style="margin-top: 20px">Settings <mat-icon class="centeredIcon">settings</mat-icon></a>
+  <a href="#" (click)="logout()">Logout <mat-icon class="centeredIcon">logout</mat-icon></a>
+</div>

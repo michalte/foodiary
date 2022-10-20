@@ -1,0 +1,29 @@
+<div class="wrapper">
+  <header >
+  </header>
+  <div class="login-form-wrapper">
+    <form>
+    <mat-card>
+      <mat-card-title>Log in</mat-card-title>
+      <mat-card-subtitle>Enter the credentials provided while creating your account.</mat-card-subtitle>
+      <br>
+      <mat-card-content>
+        <mat-form-field appearance="outline">
+          <mat-label>Login:</mat-label>
+          <input [(ngModel)]="login" name="login" matInput>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Password:</mat-label>
+          <input [(ngModel)]="password" type="password" name="password" matInput>
+        </mat-form-field>
+      </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="logInTheUser()">Log in</button>
+    </mat-card-actions>
+  <mat-error *ngIf="error!=''" style="text-align: center">{{error}}</mat-error>
+  <span>If you're not registered, you can do it <a routerLink="/registration-page">here</a></span>
+  <span>If you want to reset your password, you can do it <a style="color: #551A8B; text-decoration: underline; cursor: pointer" (click)="openDialog()">here</a></span>
+  </mat-card>
+    </form>
+  </div>
+</div>
